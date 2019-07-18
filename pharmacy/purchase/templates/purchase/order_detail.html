@@ -1,0 +1,138 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+<br>
+<input type="button" value="Save" id="btn_save" name="btn_save"
+style="float:right;background-color: #09082B;
+  border: none;
+  color: white;
+  padding: 2px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;"><br><br>
+<table class="table" id="order_list">
+<thead class="thead-dark">
+    <tr>
+    <th>Order ID</th>
+    <th>Item ID</th>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Purchase Price</th>
+    <th>MRP</th>
+    <th>Quantity Ordered</th>
+    <th>Discount offered</th>
+    <th>Edit</th>
+    <th>Delete</th>
+    </tr>
+</thead>
+<tbody>
+    {% if not count %}
+        <tr>
+        <td>{{order.order_id}}</td>
+        <td>{{order.item_id}}</td>
+        <td> {{order.item_id.name}} </td>
+        <td> {{order.item_id.type}} </td>
+        <td> {{order.purchase_price}} </td>
+        <td> {{order.mrp}} </td>
+        <td contenteditable="true"> {{order.quantity_ordered}} </td>
+        <td> {{order.discount}} </td>
+        <td><input type="button" class="btn_edit" value="Edit"></td>
+        <td><input type="button" class="btn_delete" value="Delete" ></td>
+        </tr>
+    {% endif %}
+    {% if count %}
+         {% for o in order %}
+        <tr>
+        <td>{{o.order_id}}</td>
+        <td>{{o.item_id}}</td>
+        <td> {{o.item_id.name}} </td>
+        <td> {{o.item_id.type}} </td>
+        <td> {{o.purchase_price}} </td>
+        <td> {{o.mrp}} </td>
+        <td onKeypress="if(event.keyCode < 48 || event.keyCode > 57){return false;}"> {{o.quantity_ordered}} </td>
+        <td> {{o.discount}} </td>
+        <td><input type="button" class="btn_edit" value="Edit"</td>
+        <td><input type="button" class="btn_delete" value="Delete" ></td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+
+</tbody>
+</table>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"> </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script>
+    var mark_edit=[],arr_edit=[],arr_del=[];
+    $('#order_list').on('click', '.btn_edit', function(event){
+        console.log("here")
+        var row=$(this).closest("tr");
+        var column=row.find('td').eq(6);
+        column.prop('contenteditable', true);
+        if (mark_edit.indexOf(row.find('td').eq(1).text()) == -1)
+            mark_edit.push(row.find('td').eq(1).text());
+        console.log(mark_edit)
+    });
+
+     $('#order_list').on('click', '.btn_delete', function(event){
+        console.log("here")
+        var row=$(this).closest("tr");
+         arr_del.push(row.find('td').eq(1).text());
+         console.log(arr_del);
+         row.remove();
+    });
+
+
+    $('#btn_save').click(function(event){
+        console.log("button save");
+        for(var i=0;i<arr_del.length;i++)
+        {
+            var idx= mark_edit.indexOf(arr_del[i]);
+            if ( idx != -1 )
+            {   console.log(arr_del[i]+ "found")
+                console.log(mark_edit[idx])
+                mark_edit.splice(idx,1);
+                console.log(mark_edit)
+            }
+        }
+        for(var i=0;i<mark_edit.length;i++)
+        {
+         $('#order_list > tbody  > tr').each(function() {
+            if (mark_edit[i] == $(this).find('td').eq(1).text())
+            {
+                var obj={};
+                obj.item_id = mark_edit[i];
+                obj.qty = $(this).find('td').eq(6).text();
+                arr_edit.push(obj);
+                console.log(arr_edit);
+            }
+          });
+        }
+   var input={
+      'arr_edit' : arr_edit,
+      'order_id' : $('#order_list').find('tr').eq(1).find('td').eq(0).text(),
+      'arr_del' : arr_del,
+      };
+      console.log(input);
+   $.ajax({
+    url: 'ajax_calls/order_list_save',
+    dataType: 'json',
+    data: {
+     'abc':JSON.stringify(input),},
+    complete: function(result) {
+        window.location.pathname="purchase/order";
+    },
+    failure: function(){
+      alert("It can't get saved due to some error....")
+      }
+     });
+});
+</script>

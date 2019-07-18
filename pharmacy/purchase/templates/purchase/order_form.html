@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Order New</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+</head>
+
+<body>
+    <input type="button" value="save" name="btn_save" id="btn_save" class="btn btn-primary"
+           style="margin-left:1305px;">
+  <h3>Grand total</h3>
+   <input type="number" readonly name="gtotal" id="gtotal" disabled="true">
+</body>
+   <h3>Supplier information</h3>
+   <form class="form-inline"><div class="form-group">
+      <input type="text" id="sid" name="sid" required="true" disabled="true" placeholder="Supplier Code" ></div><div class="form-group">
+      <input type="text" id="sname" name="sname" required="true" placeholder="Supplier Name" > <br><br></div><div class="form-group">
+      <input type="textarea" name="address" id="address" disabled="true" placeholder="Address"><br></div>
+   </form>
+
+   <h2>Add Items</h2>
+   <form class="form-inline">
+   <input type="number" name="item_id" id="item_id" disabled="true" placeholder="Item ID">
+   <input type="text" name="item_name" id="item_name" placeholder="Item Name" >
+   <input type="number" name="qty" id="qty" required="true" placeholder="Quantity Ordered">
+      <input type="text" id="manufacturer" name="manufacturer" disabled="true" placeholder="Manufacturer">
+   <label>Date</label>
+   <input type="date" id="date" name="date" required="true" style="margin-right: 40px">
+       <input type="button" id="btn_add" name="btn_add"value="Add" class="btn btn-primary"><br>
+   </form>
+   <script>
+let date = new Date().toISOString().substr(0, 10);
+document.querySelector("#date").value = date;</script>
+
+   <br> <br>
+<table class="table table-sm" border="1" id="myTable">
+   <thead class="thead-dark" >
+   <tr>
+      <th>Item id</th>
+      <th>Item Name</th>
+      <th>Qty ordered</th>
+      <th>Purchase Rate</th>
+      <th>MRP</th>
+      <th>Discount</th>
+      <th>Total price</th>
+      <th>Delete</th>
+   </tr>
+   </thead>
+   <tbody></tbody>
+</table>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"> </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script>
+var allData_items,allData_supplier, items = [],gtotal=0;
+$("#sname").on('input',function(){
+var term = $(this).val();
+   console.log(term)
+   $.ajax({
+    url: 'ajax_calls/supplier_search',
+    data : {
+      "term" : term
+    },
+    success: function(data) {
+        allData_supplier = data;
+        supp = [];
+        for(var i=0;i<allData_supplier.length;i++)
+        {
+            supp[i]=allData_supplier[i][1];
+        }
+        $("#sname").autocomplete({
+                source: supp,
+                minLength: 1
+              });
+    },
+    failure: function(data) {
+        alert('Got an error');
+    }
+});
+
+
+$("#item_name").on('input', function(){
+   var term = $(this).val();
+
+   $.ajax({
+    url: 'ajax_calls/item_search',
+    data : {
+      "term" : term
+    },
+    success: function(data) {
+        allData_items = data;
+        items = [];
+        for(var i=0;i<allData_items.length;i++)
+        {
+            items[i]=allData_items[i][1];
+        }
+        $("#item_name").autocomplete({
+                source: items,
+                minLength: 1
+              });
+    },
+    failure: function(data) {
+        alert('Got an error');
+    }
+});
+
+$(document).ready(function () {
+      $('#item_name').on('autocompleteselect', function () {
+       console.log($(this).val())
+       var idx=items.indexOf($(this).val());
+       console.log(idx)
+       $('#manufacturer').val(allData_items[idx][2]);
+       $('#item_id').val(allData_items[idx][0]);
+    });
+});
+})
+$(document).ready(function () {
+      $('#sname').on('autocompleteselect', function () {
+       console.log($(this).val())
+       var idx=supp.indexOf($(this).val());
+       console.log(idx)
+       $('#sid').val(allData_supplier[idx][0]);
+       $('#address').val(allData_supplier[idx][2]);
+       document.getElementById('sname').disabled=true;
+    });
+});
+})
+
+ var row=0,items_id=[];
+  $('#btn_add').click(function(event){
+   $.ajax({
+    url: 'ajax_calls/supply_product_search',
+    data : {
+      "item_id" : $('#item_id').val(),
+      "supplier_id" : $('#sid').val()
+    },
+    success: function(data) {
+        console.log("In success function")
+        var display=[];
+        display = data;
+        if (display.length==0)
+        {
+             alert("This supplier does not supply required item");
+            return;
+        }
+           if ($('#qty').val() == "")
+            {   alert("Please add Some Item")
+               return;
+            }
+           if ($('#qty').val()<0)
+           {
+               alert("Quantity ordered can't be negative")
+               return ;
+           }
+           console.log("Item id" + $('#item_id').val())
+           console.log("Idx of this item " + items_id.indexOf($('#item_id').val()))
+           if (items_id.indexOf($('#item_id').val()) != -1)
+           {
+                alert("Item already exist in the list");
+                return;
+           }
+           items_id.push($('#item_id').val());
+           console.log("Items id")
+           console.log(items_id)
+           var total=$('#qty').val()*display[0];
+           total=(1-display[2]/100)*total;
+           gtotal+=total;
+           $('#gtotal').val(gtotal);
+            var str = "";
+            str = str + "<tr id=row>";
+            row=row+1;
+            str = str + "<td>" + $('#item_id').val() +"</td>";
+            str = str + "<td>" + $('#item_name').val() +"</td>";
+            str = str + "<td>" + $('#qty').val() +"</td>";
+            str = str + "<td>" + display[0] +"</td>";
+            str = str + "<td>" + display[1] +"</td>";
+            str = str + "<td>" + display[2] +"</td>";
+            str = str + "<td>" + total +"</td>";
+            str = str + "<td><input type='button' value='Delete' class='deletebutton'></input></td>";
+            str = str + "</tr>";
+            $("#myTable").append(str);
+
+    },
+    failure: function(data) {
+        alert("This supplier does not supply required item");
+    }
+   });
+});
+
+$('#btn_save').click(function(event){
+   console.log($('#sid').val())
+   console.log("reached here")
+     var url='order'
+     var dict=[];
+   $('#myTable > tbody  > tr').each(function() {
+      var obj={};
+      obj.item_id=$(this).find('td').eq(0).text();
+      obj.qty=$(this).find('td').eq(2).text();
+      obj.purchase_price=$(this).find('td').eq(3).text();
+      obj.mrp=$(this).find('td').eq(4).text();
+      obj.discount=$(this).find('td').eq(5).text();
+      obj.total_price=$(this).find('td').eq(6).text();
+      dict.push(obj);
+   });
+   console.log(dict);
+   var input={
+      'objects' : dict,
+      'date' : $('#date').val(),
+      'supplier_id' : $('#sid').val(),
+      'gtotal' : $('#gtotal').val(),
+      };
+
+   $.ajax({
+    url: 'ajax_calls/order_save',
+    dataType: 'json',
+    data: {
+     'abc':JSON.stringify(input),},
+    success: function(result) {
+        window.location.assign(url);
+    },
+    failure: function(){
+      alert("It can't get saved due to some error....")
+      }
+     });
+});
+
+ $('#myTable').on('click', '.deletebutton', function(event){
+        var row=$(this).closest("tr");
+        var price=row.find('td').eq(6).text();
+        gtotal-=price;
+        $('#gtotal').val(gtotal);
+        var id=row.find('td').eq(0).text();
+        var idx=items_id.indexOf(id);
+        items_id.splice(idx,1);
+        console.log(items_id);
+        row.remove();
+    });
+</script>
+</html>

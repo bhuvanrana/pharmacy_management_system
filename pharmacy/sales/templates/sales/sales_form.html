@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<input type="button" value="Save" name="btn_save" id="btn_save" class="btn btn-primary" style="margin-left:1240px;">
+<input type="button" value="Print" name="btn_print" id="btn_print" class="btn btn-primary" style="float:right;"><br>
+
+</body>
+    <br><br>
+    <h3>Enter Customer Details</h3>
+   <label>Customer Name</label>
+   <input type="text" placeholder="Customer name" id="c_name">
+   <label>Contact no</label>
+   <input type="number" onKeypress="if(event.keyCode < 48 || event.keyCode > 57){return false;}" placeholder="Contact no" id="c_phone">
+   <label>Date</label>
+ <input type="date" id="date" name="date" required="true" style="margin-right: 40px"><br> <br>
+<table class="table table-sm" border="1" id="sales_table">
+   <thead class="thead-dark" >
+   <tr>
+      <th>Item id</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Batchno</th>
+      <th>Exp date</th>
+      <th>Required Qty</th>
+      <th>Available Qty</th>
+      <th>MRP</th>
+      <th>Discount</th>
+      <th>Amount</th>
+      <th>Delete</th>
+   </tr>
+   </thead>
+   <tbody>
+        <tr>
+            <td></td>
+            <td> <input type="text" class="item_name" placeholder="Item Name" ></td>
+            <td></td>
+            <td><select class="btn_select"> </td>
+            <td></td>
+            <td class="qty" contenteditable="true" onKeypress="if(event.keyCode < 48 || event.keyCode > 57){return false;}"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>0</td>
+            <td><input type="button" id="btn_add" value="ADD"></td>
+        </tr>
+   </tbody>
+</table>
+<div style="float:right">
+    <label style="color:purple;">Grand total</label><br>
+   <input type="number" readonly name="gtotal" id="gtotal" disabled="true" style="width:80px;">
+    <input type="button" value="calculate" name="btn_calc" id="btn_calc" class="btn btn-primary" style="width:80px">
+</div>
+
+<script>
+let date = new Date().toISOString().substr(0, 10);
+document.querySelector("#date").value = date;</script>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"> </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+
+<script>
+var allData_items,allData_supplier, items = [],gtotal=0;
+
+$("#sales_table").on('input','.item_name', function(){
+   var term = $(this).closest('tr').find('td').eq(1).find('input').val();
+   console.log(term)
+   $.ajax({
+        url: 'ajax_calls/item_search',
+        data : {
+          "term" : term
+        },
+        success: function(data) {
+            allData_items = data;
+            console.log(allData_items)
+            items = [];
+            for(var i=0;i<allData_items.length;i++)
+            {
+                items[i]=allData_items[i][1];
+            }
+            $(".item_name").autocomplete({
+                    source: items,
+                    minLength: 1
+                  });
+        },
+        failure: function(data) {
+            alert('Got an error');
+        }
+   });
+});
+
+var stock=[];
+$('#sales_table').on('autocompleteselect','.item_name', function () {
+      console.log("in items on . autojsdnfv")
+       var row=$(this).closest('tr');
+       console.log(items)
+        var idx=items.indexOf($(this).val());
+        console.log(idx)
+        $.ajax({
+    url: 'ajax_calls/stock_search',
+    data : {
+      "item_id" : JSON.stringify(allData_items[idx][0]),
+    },
+    success: function(data) {
+            stock=[]
+            stock=data;
+            console.log(stock)
+            if( stock.length == 0)
+            {
+                alert("requested item not available... Stock empty");
+                return false;
+            }
+            stock.sort(function(a, b){
+                return a.exp_date-b.exp_date;
+            });
+            var s=row.find('td').eq(3).find('select');
+            for(var i=0;i<stock.length;i++)
+            {
+                console.log(stock[i])
+                s.append($('<option><option/>').val(stock[i][2]).text(stock[i][2]));
+            }
+            row.find('td').eq(0).text(allData_items[idx][0]);
+            row.find('td').eq(2).text(allData_items[idx][3]);
+            row.find('td').eq(8).text(allData_items[idx][2]);
+            console.log(stock[0][3]);
+            console.log(allData_items[idx][4]);
+            var amnt=parseInt(stock[0][0])*allData_items[idx][4] + parseInt(stock[0][1]);
+            row.find('td').eq(4).text(stock[0][3]);
+            row.find('td').eq(6).text(amnt);
+            row.find('td').eq(7).text(stock[idx][4]);
+     },
+     failure: function(){
+      alert("some error....")
+      }
+
+    });
+});
+
+
+ var row=0,items_id=[];
+  $('#btn_add').click(function(event){
+
+
+            var str = "";
+            str = str + "<tr>";
+            str = str + '<td></td>';
+            str = str + "<td><input type='text' class='item_name' placeholder='Item Name' ></td>";
+            str = str + ' <td></td>';
+            str = str + '<td><select class="btn_select"> </td>';
+            str = str + '<td></td>';
+            str = str + ' <td class="qty" contenteditable="true" onKeypress="if(event.keyCode < 48 || event.keyCode > 57){return false;}"></td>';
+            str = str + ' <td></td>';
+            str = str + ' <td></td>';
+            str = str + ' <td></td>';
+            str = str + ' <td >0</td>';
+            str = str + "<td><input type='button' value='Delete' class='btn_delete' value='Delete'></td>";
+            str = str + "</tr>";
+            $("#sales_table").append(str);
+
+
+});
+
+$("#sales_table").on('input','.qty', function() {
+    console.log("units input")
+    var row=$(this).closest('tr');
+    var amnt=row.find('td').eq(9).text();
+    if (amnt=="NaN")
+        amnt=0
+    else
+        amnt=parseFloat(amnt);
+    var avail_qty=parseInt(row.find('td').eq(6).text());
+    var req_qty=parseInt(row.find('td').eq(5).text());
+    if(req_qty> avail_qty)
+    {
+        alert("Required qty is greater than available qty")
+        return false;
+    }
+    console.log(amnt)
+    var price=0;
+    var idx=items.indexOf(row.find('td').eq(1).find('input').val());
+    var per_unit= allData_items[idx][4];
+    console.log("per unit" + per_unit);
+    price = (parseFloat(row.find('td').eq(7).text())/per_unit)
+    console.log(price)
+    price= price*req_qty;
+    console.log("price before disc" + price)
+    var discount=parseFloat(row.find('td').eq(8).text());
+    console.log(discount);
+    amnt=(1-discount/100)* price;
+    console.log("price" + amnt)
+    row.find('td').eq(9).text(amnt);
+
+});
+
+
+$('#btn_calc').click(function(event){
+  var gtotal=0;
+  $('#sales_table >tbody >tr').each(function() {
+      gtotal += parseFloat($(this).find('td').eq(9).text());
+      $('#gtotal').val(gtotal);
+
+  });
+});
+
+$('#btn_save').click(function(event){
+   console.log("hii" + $('#c_phone').val());
+   if ($('#c_name').val() == "" || $('#c_phone').val() == "")
+   {
+        alert("Enter customer details");
+        return false;
+   }
+   if ($("#c_phone").val() != "" )
+   {
+        let a=$("#c_phone").val();
+        if (a.length !=10)
+         {   alert("Invalid Phone no");
+            return false; }
+   }
+   console.log("reached here")
+
+     var dict=[];
+     var gtotal=0;
+   $('#sales_table > tbody  > tr').each(function() {
+          var obj={};
+          gtotal += parseFloat($(this).find('td').eq(9).text());
+          obj.item_id=$(this).find('td').eq(0).text();
+          obj.qty=$(this).find('td').eq(5).text();
+          obj.batchno=$(this).find('td').eq(3).find('select').val();
+          obj.mrp=$(this).find('td').eq(7).text();
+          obj.discount=$(this).find('td').eq(8).text();
+          dict.push(obj);
+   });
+   $('#gtotal').val(gtotal);
+   console.log(dict);
+   var input={
+          'objects' : dict,
+          'date' : $('#date').val(),
+          'gtotal' : $('#gtotal').val(),
+          'c_name' : $('#c_name').val(),
+          'c_phone' : $('#c_phone').val(),
+      };
+     var url='sales'
+   $.ajax({
+        url: 'ajax_calls/sale_save',
+        dataType: 'json',
+        data: {
+         'abc':JSON.stringify(input),},
+        success: function(result) {
+            window.location=url;
+        },
+        failure: function(){
+          alert("It can't get saved due to some error....")
+          }
+     });
+});
+
+$('#sales_table').on('click','.btn_select',function(event){
+    var row=$(this).closest('tr');
+    console.log("in btnselect")
+    var batch=row.find('td').eq(3).find('select').val();
+    console.log(batch)
+    var idx=-1
+    for(var i=0;i<stock.length;i++)
+    {
+        if(stock[i][2]==batch)
+        {
+            idx=i;
+            break;
+        }
+    }
+    console.log(stock)
+    console.log(idx)
+     row.find('td').eq(4).text(stock[idx][3]);
+     var i=items.indexOf(row.find('td').eq(1).find('input').val());
+     var amnt=parseInt(stock[idx][0])*allData_items[i][4] + parseInt(stock[idx][1]);
+     row.find('td').eq(6).text(amnt);
+     row.find('td').eq(7).text(stock[idx][4]);
+});
+
+$('#sales_table').on('click', '.btn_delete', function(event){
+        var row=$(this).closest("tr");
+        var price=parseFloat(row.find('td').eq(9).text());
+        var gtotal =parseFloat($('#gtotal').val())
+         gtotal -=price;
+        $('#gtotal').val(gtotal);
+        row.remove();
+    });
+
+$('#btn_print').click(function(event){
+    window.print()
+
+});
+
+</script>
+</html>

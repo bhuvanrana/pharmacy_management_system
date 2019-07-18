@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+{% load static %}
+<link href="{% static 'accounts/css/sb-admin-2.min.css' %}" rel="stylesheet">
+<body>
+ <div class="col-xl-4 col-lg-5">
+                        <!-- Expiry Date -->
+                             <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Expiring Soon</h6>
+                             </div>
+                        <!-- Expiry Date -->
+
+                        <table class="table">
+                         <thead>
+                              <tr>
+                                  <th>ItemID</th>
+                                <th>BatchNo </th>
+                                <th>ExpDate</th>
+                              </tr>
+                            </thead>
+                         <tbody>
+                       {% for i in stock %}
+                        <tr>
+                            <td>{{i.item_id.name}}</td>
+                            <td>{{i.batch_no}}</td>
+                              <td>{{i.exp_date}} </td>
+                       </tr>
+                        {% endfor %}
+
+                         </tbody>
+                          </table>
+                    </div>
+
+</body>
+</html>

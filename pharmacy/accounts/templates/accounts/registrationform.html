@@ -1,0 +1,50 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<center>
+    {% if error %}
+        <p style="color: red;">
+            {{ error_statement }}
+        </p>
+    {% endif %}
+    <form  method="POST" action="/accounts/register">
+    {% csrf_token %}
+   <!--    <label>First Name</label>
+        <input type="text" name="f_name" required="true" ><br>
+        <label>Last Name</label>
+        <input type="text" required="true" name="l_name"><br>
+        <label>Address</label>
+        <input type="text" required="true" name="address"><br>
+        <label>Email id</label>
+        <input type="text" required="true" name="email"><br>
+        <label>Phone number</label>
+        <input type="text" required="true" name="phone"><br>
+        <label>Role</label>
+        <input type="radio" name="role">Admin<br>
+        <input type="radio" name="role" checked="true"> Worker <br>
+        <label>Password</label>
+        <input type="password" required="true" name="pwd"><br>
+        <label>Confirm password</label>
+        <input type="password" required="true" name="confirm_pwd"><br>  -->
+        {{ form.as_p }}
+        <input type="submit" value="Register">
+    </form>
+</center>
+
+</body>
+</html>

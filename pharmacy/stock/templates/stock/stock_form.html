@@ -1,0 +1,79 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+
+<html>
+<body>
+<form method="POST" >{% csrf_token %}
+    <label>Item Name</label>
+    <input type="text" id="name" name="name" required="True" readonly> <br> <br>
+     <label>Type</label>
+    <input type="text" id="type" name="type" required="True" readonly> <br><br>
+     <label>Qty per unit</label>
+    <input type="text" id="per_unit" name="per_unit" required="True" readonly> <br>
+    {{ stock_form.as_p }}
+    <input type="submit" name="submit" value="Submit" />
+</form>
+<h1>Item</h1>
+{% if error %}
+        <p style="color: red;">
+            Item does'nt exist!
+        </p>
+  {% endif %}
+<form method="POST" >
+    {% csrf_token %}
+    <label>Search by item name</label>
+    <input type="text" required="True" name="txt_search">
+    <input type="submit" name="btn_search" value="Search">
+</form><br>
+<table border="1" id="mytable" >
+<thead>
+    <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Qty per unit</th>
+    <th>Min Qty</th>
+    <th>MRP</th>
+    <th>Discount</th>
+    <th>Rack number</th>
+    </tr>
+</thead>
+<tbody>
+    {% for it in obj_list %}
+    <tr id="{{it.id}}">
+    <td>{{it.name}}</td>
+    <td> {{it.type}} </td>
+    <td> {{it.per_unit}} </td>
+    <td> {{it.min_qty}} </td>
+    <td> {{it.MRP}} </td>
+    <td> {{it.discount}} </td>
+    <td> {{it.rackno}} </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<script language="javascript" ></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+
+</script>
+<script>
+
+    $('#mytable').on('click', 'tr', function(event){
+        var item_to_unit_id = $(this).attr('id');
+        console.log(item_to_unit_id)
+    $("#name").val($("#" +item_to_unit_id+ " td:nth-child(1)").text());
+    $("#type").val($("#" +item_to_unit_id+ " td:nth-child(2)").text());
+    $("#per_unit").val($("#" +item_to_unit_id+ " td:nth-child(3)").text());
+    });
+
+</script>
+</body>
+</html>

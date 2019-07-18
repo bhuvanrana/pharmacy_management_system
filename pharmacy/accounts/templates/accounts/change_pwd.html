@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<body>
+
+{% if error %}
+        <p style="color: red;">
+            {{error_statement}}
+        </p>
+  {% endif %}
+<div class="col-sm-6">
+    <div style="margin-left:419px; width:500px; margin-top:50px" class="panel panel-default">
+        <div class="panel-heading">Enter your details</div>
+        <div class="panel-body">
+    <form  method="POST">
+     {% csrf_token %}
+        <label>Username</label>
+        <input type="text" disabled="true" name="uname" class="form-control" value={{uname}} required="true"/> <br>
+        <label>Current Password</label>
+         <input type="password" name="curr_pwd" class="form-control" placeholder="password" required="true"/><br>
+        <label>New Password</label>
+         <input type="password" name="new_pwd" class="form-control" placeholder="password" required="true"/><br>
+        <label>Confirm Password</label>
+         <input type="password" name="confirm_pwd" class="form-control" placeholder="password" required="true"/><br>
+         <input type="submit" value="Login">
+    </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

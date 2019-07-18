@@ -1,0 +1,79 @@
+{% load widget_tweaks %}
+<head xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+    <style>
+        .bg-img {
+         background-image: url("/static/accounts/img/med.jpeg");
+         height:600px;
+         background-attachment:fixed;
+
+         }
+    </style>
+<div class="bg-img">
+ {% if error %}
+        <p style="color: red;">
+            {{ error_statement }}
+        </p>
+{% endif %}
+
+<div style="background:#C2C6C5;box-sizing: border-box;
+  width: 50%;
+  border: 5px;
+  float: left;margin-top:30px;margin-left:550px;text-align:center;">
+<form method="post" >{% csrf_token %}
+	<br>
+   <br>
+	<p><label>Name </label> {{item_form.name}}</p>
+	<p><label>Manufacturer </label> {{item_form.manufacturer}}</p>
+	<p><label>Description </label> {{item_form.description}}</p>
+	<p><label>Rack Number </label> {{item_form.rackno}}</p>
+	<p><div id="type_id"><label>Type</label>{{item_form.type}}
+	</div></p>
+	<p>
+	<div id="per_unit">
+	<label>Qty per unit </label>
+	{% render_field item_form.per_unit id="per" %}
+	</div> </p>
+	<p><label>Minimum Qty </label> {{item_form.min_qty}}</p>
+	<p><label>MRP </label> {{item_form.MRP}}</p>
+	<p><label>Discount </label> {{item_form.discount}}</p>
+    <input type="submit" value="Submit" style="  background-color: #182B57;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;">
+</form>
+</div>
+</div>
+
+<script>
+	$('#type_id').on('click',function(event){
+	console.log("here");
+
+   var type=$(this).find('select').val();
+    if (type=="tablet" || type=="capsule")
+    {
+    	console.log("if");
+    	$('#per').attr('readonly',false);
+    }
+    else
+    {
+    	$('#per').val(1);
+    	$('#per').attr('readonly',true);
+    }
+
+
+});
+</script>

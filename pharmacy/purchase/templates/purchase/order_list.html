@@ -1,0 +1,82 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 ></h1>
+          {% if role %}
+                    <a href="../accounts" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-home"></i>    Home</a>
+                    {% else %}
+    <a href="../accounts/worker" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-home"></i>   Home</a>
+    {% endif %}
+                       </div>
+
+{% if error %}
+        <p style="color: red;">
+            Supplier does'nt exist!
+        </p>
+  {% endif %}
+<form method="POST" >
+    {% csrf_token %}
+    <input type="text" required="True" name="search" placeholder="Enter Supplier Name">
+    <input type="submit" value="Search" style="  background-color: #09082B;
+  border: none;
+  color: white;
+  padding: 2px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;">
+</form><br>
+
+<table class="table" border="1">
+<thead class="thead-dark" >
+    <tr>
+    <th>Order ID</th>
+    <th>Supplier Name</th>
+    <th>Address</th>
+    <th>Gtotal</th>
+    <th>Date of order</th>
+    <th>View</th>
+    <th>Delete</th>
+    <th>Retreive Order</th>
+    </tr>
+</thead>
+<tbody>
+{% if not count %}
+    <tr>
+        <td>{{order.id}}</td>
+        <td> {{order.supplier_id.name}} </td>
+        <td> {{order.supplier_id.address}} </td>
+        <td> {{order.gtotal}} </td>
+        <td> {{order.date}} </td>
+        <td><a href="{% url 'Order_view' order.id %}">View</a></td>
+        <td><a href="{% url 'Order_delete' order.id %}">Delete</a></td>
+        <td><a href="{% url 'Rtr_view' order.id %}">Retreive Order</a></td>
+    </tr>
+{% endif %}
+{% if count %}
+     {% for o in order %}
+    <tr>
+    <td>{{o.id}}</td>
+    <td> {{o.supplier_id.name}} </td>
+    <td> {{o.supplier_id.address}} </td>
+    <td> {{o.gtotal}} </td>
+    <td> {{o.date}} </td>
+    <td><a href="{% url 'Order_view' o.id %}">View</a></td>
+    <td><a href="{% url 'Order_delete' o.id %}">Delete</a></td>
+    <td><a href="{% url 'Rtr_view' o.id %}">Retreive Order</a></td>
+    </tr>
+    {% endfor %}
+{% endif %}
+</tbody>
+</table>
+
+<a href="{% url 'Order_new' %}">New</a>

@@ -1,0 +1,24 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+
+<html>
+<body>
+<form method="POST" >{% csrf_token %}
+    <label>Item Name</label>
+    <input type="text" id="name" name="name" required="True" value={{obj.item_id.name}} readonly> <br> <br>
+     <label>Type</label>
+    <input type="text" id="type" name="type" required="True" value={{obj.item_id.type}} readonly> <br><br>
+     <label>Qty per unit</label>
+    <input type="text" id="per_unit" name="per_unit" required="True" value={{obj.item_id.per_unit}} readonly> <br>
+    {{ stock_form.as_p }}
+    <input type="submit" name="submit" value="Submit" />
+</form>

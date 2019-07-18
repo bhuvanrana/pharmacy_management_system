@@ -1,0 +1,34 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+
+<html>
+<body>
+
+{% if error %}
+        <p style="color: red;">
+            {{error_stat}}
+        </p>
+{% endif %}
+<form method="POST" >{% csrf_token %}
+    <label>Item Name</label>
+    <input type="text" id="item_name" name="item_name"  value={{obj.item_id.name}} disabled="true"> <br> <br>
+     <label>Type</label>
+    <input type="text" id="type" name="type" value={{obj.item_id.type}} disabled="true"> <br><br>
+     <label>MRP</label>
+    <input type="text" id="mrp" name="mrp" required="True" value={{obj.item_id.MRP}} readonly> <br>
+     <label>Supplier name </label>
+    <input type="text" id="supplier_name" name="supplier_name" value={{obj.supplier_id.name}} disabled="true"> <br>
+    <label>Phone number </label>
+    <input type="text" id="phone" name="phone" value={{obj.supplier_id.phone_no}} disabled="true"> <br>
+    {{ supply_product_form.as_p }}
+    <input type="submit" name="submit" value="Submit" />
+</form>

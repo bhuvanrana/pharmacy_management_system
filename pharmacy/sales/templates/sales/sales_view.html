@@ -1,0 +1,39 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+
+<h1>Items List</h1>
+<table class="table" border="1">
+<thead class="thead-dark" >
+    <tr>
+    <th>Invoice ID</th>
+    <th>Item name</th>
+    <th>Batchno</th>
+    <th>Exp date</th>
+    <th>MRP</th>
+    <th>Discount</th>
+    <th>Qty</th>
+    </tr>
+</thead>
+<tbody>
+     {% for o in invoice_items %}
+    <tr>
+    <td>{{o.id}}</td>
+    <td> {{o.item_name}} </td>
+    <td> {{o.batchno}} </td>
+    <td> {{o.exp_date}} </td>
+    <td> {{o.mrp}} </td>
+    <td> {{o.discount}} </td>
+    <td> {{o.qty}}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>

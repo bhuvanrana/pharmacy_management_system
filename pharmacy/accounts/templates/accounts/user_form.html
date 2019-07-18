@@ -1,0 +1,51 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+<style>
+</style>
+<style>
+        .bg-img {
+         background-image: url("/static/accounts/img/adduser.svg");
+         height:100%;
+         background-attachment:fixed;
+background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+         }
+    </style>
+
+<div class="bg-img">
+     {% if error %}
+            <p style="color: red;">
+                {{ error_statement }}
+            </p>
+    {% endif %}
+    <div style="background-color:gainsboro;box-sizing: border-box;
+      width: 50%;
+      border: 5px ;
+      float: left;margin-left:350px;text-align:center;">
+    <form method="post" >
+        {% csrf_token %}
+        <div class="form-group">
+             <br>
+            {{ form.as_p }}
+            <input type="submit" value="Submit" style="  background-color: #182B57;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;">
+        </div>
+    </form>
+    </div>
+</div>

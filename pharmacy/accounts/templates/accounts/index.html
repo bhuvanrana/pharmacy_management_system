@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        .bg-img {
+         background-image: url("/static/accounts/img/pharmacy1.png");
+         height:550px;
+         background-attachment:fixed;
+         background-repeat: no-repeat;
+         background-size: 100% 100%;
+         }
+    </style>
+</head>
+       {% if error %}
+        <p style="color:red;margin-left:30%;font-size:18px">
+            Invalid Username or Password
+        </p>
+      {% endif %}
+<!--<body style=" background-image : url('/static/accounts/img/home_bg.jpg')50% 0 no-repeat fixed" > -->
+<body>
+<div class="bg-img">
+<div class="container-fluid">
+<div class="col-md-4 " style="margin-left:500px; margin-top:150px; width:500px;">
+    <div class="panel panel-primary">
+        <div style='background-color :grey color: white' class="panel-heading " >Enter your details</div>
+        <div class="panel-body">
+
+    <form method="POST">
+     {% csrf_token %}
+        <label>Username</label>
+        <input type="text" name="uname" class="form-control" placeholder="username" required="true"/><br>
+        <label>Password</label>
+         <input type="password" name="password" class="form-control" placeholder="password" required="true"/><br>
+         <input type="submit" value="Login" class="btn btn-primary">
+    </form>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

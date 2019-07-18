@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hii</title>
+</head>
+<body>
+{% if error %}
+        <p style="color: red;">
+            Invalid Username or Password
+        </p>
+  {% endif %}
+<form action="/accounts/" method="POST">
+    {% csrf_token %}
+    <label>Username</label>
+    <input type="text" name="email_id" required="true"/><br>
+    <label>Password</label>
+    <input type="password" name="password" required="true"/><br>
+    <input type="submit" value="Login">
+</form>
+
+</body>
+</html>

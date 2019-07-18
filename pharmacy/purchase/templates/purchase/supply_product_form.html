@@ -1,0 +1,227 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pharmacy Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+
+<html>
+<body>
+<style>
+.btn_color{
+background-color: #09082B;
+  border: none;
+  color: white;
+  padding: 2px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;"
+  }
+ .column {
+  float: left;
+  width: 50%;
+}
+</style>
+
+<div class="column">
+    <h3>Item</h3>
+    <input style="margin-left:10px" type="text" id='i_name' required="True" name="txt_search_item" placeholder="Item name">
+    <input style="margin-left:10px;" type="submit" id='item_btn' name="btn_search_item" value="Search" class="btn_color">
+
+<table border="1" id="item_table" >
+    <thead class="thead-dark">
+        <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>MRP</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+    </div>
+
+
+    <div class="column">
+        <h3>Supplier</h3>
+        <input type="text" id='s_name' required="True" name="txt_search_supplier" placeholder="Supplier Name">
+        <input type="submit" id="supplier_btn" name="btn_search_supplier"
+               value="Search" class="btn_color">
+
+<table border="1" id="supplier_table" >
+    <thead>
+        <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Phone no</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+</div>
+
+
+ <br> <h3>Item Details</h3>
+    <label>ID</label>
+    <input type="number" disabled="true" id="item_id" name="item_id">
+    <label>Name</label>
+    <input type="text" id="item_name" name="item_name" disabled="True" >
+     <label>Type</label>
+    <input type="text" id="type" name="type" disabled="true">
+    <label>MRP</label>
+    <input type="number" id="mrp" disabled="true"><br>
+    <br><h3>Supplier Details</h3>
+    <label>ID</label>
+    <input type="number" id="sid" name="sid" disabled="true">
+     <label>Name</label>
+    <input type="text" id="supplier_name" name="supplier_name" disabled="True" >
+     <label>Phone number</label>
+    <input type="text" id="phone" name="phone" disabled="True"> <br><br>
+    <label>Purchase Price</label>
+    <input type="number" id="purchase" name="purchase" required="true">
+    <label>Discount</label>
+    <input type="number" id="discount" name= "dicsount" required="true">
+    <input type="submit" id="btn_submit" name="submit" value="Submit" />
+<script language="javascript" ></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+
+</script>
+
+<script>
+
+$('#btn_submit').on('click', function(event) {
+        if (parseFloat($('#purchase').val()) > parseFloat($('#mrp').val()))
+        {
+            alert("Purchase price is greater than mrp of the item");
+            return false;
+        }
+        console.log("hiisid")
+        var input={
+          'item_id' : $('#item_id').val(),
+          'sid' : $('#sid').val(),
+          'purchase' : $('#purchase').val(),
+          'discount' : $('#discount').val(),
+      };
+      console.log(input)
+        $.ajax({
+            url: 'ajax_calls/supply_product_save',
+            dataType: 'json',
+            data: {
+             'abc':JSON.stringify(input),
+             },
+            complete: function(data) {
+                var d=data
+                if (d == "It already exits!!")
+                {
+                    alert("It already exits!!");
+                    return false;
+                }
+                else
+                    window.location='supply_product'
+             },
+            failure: function(){
+              alert("It can't get saved due to some error....")
+              }
+     });
+
+
+});
+
+    $('#item_table').on('click', 'tr', function(event){
+        var item_to_unit_id = $(this).find('td').eq(0).text();
+        console.log(item_to_unit_id)
+    $("#item_name").val($(this).find('td').eq(1).text());
+    $('#mrp').val($(this).find('td').eq(4).text());
+    $("#type").val($(this).find('td').eq(3).text());
+    $('#item_id').val($(this).find('td').eq(0).text());
+    });
+
+     $('#supplier_table').on('click', 'tr', function(event){
+        var supplier_id = $(this).find('td').eq(0).text();
+    $("#supplier_name").val($(this).find('td').eq(1).text());
+    $("#phone").val($(this).find('td').eq(3).text());
+    $('#sid').val($(this).find('td').eq(0).text());
+    });
+
+ $('#item_btn').on('click', function(event) {
+        var allData=[];
+        var term=$('#i_name').val()
+        console.log(term)
+        $.ajax({
+            url: 'ajax_calls/item_search',
+            dataType: 'json',
+            data: {
+             'term':term
+             },
+            success: function(data) {
+                allData=data;
+                console.log(allData)
+                $("#item_table").find("tr:gt(0)").remove();
+                for(var i=0;i<allData.length;i++)
+                {
+                    var str = "";
+                    str = str + "<tr>";
+                    str = str + '<td>' + allData[i][0] +'</td>';
+                    str = str + '<td>' + allData[i][1] +'</td>';
+                    str = str + '<td>' + allData[i][3] +'</td>';
+                    str = str + '<td>' + allData[i][6] +'</td>';
+                    str = str + '<td>' + allData[i][5] +'</td>';
+                    str = str + "</tr>";
+                    console.log(str)
+                    $("#item_table").append(str);
+                }
+            },
+            failure: function(){
+              alert("It can't get saved due to some error....")
+              }
+     });
+
+    });
+
+    $('#supplier_btn').on('click', function(event) {
+        var allData_s=[];
+        var term=$('#s_name').val()
+        console.log(term)
+        $.ajax({
+            url: 'ajax_calls/supplier_search',
+            dataType: 'json',
+            data: {
+             'term':term
+             },
+            success: function(data) {
+                 allData_s=data;
+                console.log(allData_s)
+                 $("#supplier_table").find("tr:gt(0)").remove();
+                for(var i=0;i<allData_s.length;i++)
+                {
+                    var str = "";
+                    str = str + "<tr>";
+                    str = str + '<td>' + allData_s[i][0] +'</td>';
+                    str = str + '<td>' + allData_s[i][1] +'</td>';
+                    str = str + '<td>' + allData_s[i][2] +'</td>';
+                    str = str + '<td>' + allData_s[i][3] +'</td>';
+                    str = str + "</tr>";
+                    console.log(str)
+                    $("#supplier_table").append(str);
+                }
+            },
+            failure: function(){
+              alert("It can't get saved due to some error....")
+              }
+     });
+
+    });
+
+</script>
+</body>
+</html>

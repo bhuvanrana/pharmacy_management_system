@@ -1,0 +1,118 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Stock List</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+</head>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 ></h1>
+                       {% if role %}
+                    <a href="../accounts" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-home"></i>    Home</a>
+                    {% else %}
+    <a href="../accounts/worker" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-home"></i>   Home</a>
+    {% endif %}
+                </div>
+
+{% if error %}
+        <p style="color: red;">
+            {{error_statement}}
+        </p>
+  {% endif %}
+<form method="POST" >
+    {% csrf_token %}
+    <input type="text" style="margin-left:10px;"required="True" name="item" id="item_name" placeholder="Enter Item Name">
+    <input type="submit" value="Search" style="  background-color: #09082B;
+  border: none;
+  color: white;
+  padding: 2px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;">
+</form><br>
+<table class="table" border="1">
+<thead class="thead-dark">
+    <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Qty per unit</th>
+    <th>Min Qty</th>
+    <th>MRP</th>
+    <th>Discount</th>
+    <th>Rack number</th>
+    <th>No of units</th>
+    <th>Loose Qty</th>
+    <th>Exp_date</th>
+    <th>Batch No</th>
+    </tr>
+</thead>
+<tbody>
+    {% if not count %}
+    <tr>
+        <td>{{obj_list.item_id.name}}</td>
+        <td> {{obj_list.item_id.type}} </td>
+        <td> {{obj_list.item_id.per_unit}} </td>
+        <td> {{obj_list.item_id.min_qty}} </td>
+        <td> {{obj_list.mrp}} </td>
+        <td> {{obj_list.item_id.discount}} </td>
+        <td> {{obj_list.item_id.rackno}} </td>
+        <td> {{obj_list.no_of_units}} </td>
+        <td>{{obj_list.loose_qty}}</td>
+        <td> {{obj_list.exp_date}} </td>
+        <td>{{obj_list.batch_no}}</td>
+
+    </tr>
+    {% endif %}
+
+    {% if count %}
+        {% for it in obj_list %}
+            <tr>
+                <td>{{it.item_id.name}}</td>
+                <td> {{it.item_id.type}} </td>
+                <td> {{it.item_id.per_unit}} </td>
+                <td> {{it.item_id.min_qty}} </td>
+                <td> {{it.mrp}} </td>
+                <td> {{it.item_id.discount}} </td>
+                <td> {{it.item_id.rackno}} </td>
+                <td> {{it.no_of_units}} </td>
+                <td>{{it.loose_qty}}</td>
+                <td> {{it.exp_date}} </td>
+                <td>{{it.batch_no}}</td>
+
+            </tr>
+        {% endfor %}
+    {% endif %}
+</tbody>
+</table>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    var allData_items, items = [];
+    $("#item_name").on('input', function(){
+   var term = $(this).val();
+    console.log('here');
+   $.ajax({
+    url: 'ajax_calls/item_search',
+    data : {
+      "term" : term
+    },
+    success: function(data) {
+        allData_items = data;
+        items = [];
+        for(var i=0;i<allData_items.length;i++)
+        {
+            items[i]=allData_items[i][1];
+        }
+        $("#item_name").autocomplete({
+                source: items,
+                minLength: 1
+              });
+    },
+    failure: function(data) {
+        alert('Got an error');
+    }
+
+});

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<form method="POST"> {% csrf_token %}
+    <p>Are u sure you want to log out?</p>
+    <input type="submit" name="yes" value="YES">
+    <input type="submit" name ="no" value="NO">
+</form>
+</body>
+</html>

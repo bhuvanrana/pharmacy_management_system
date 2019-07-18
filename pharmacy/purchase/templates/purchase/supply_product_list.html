@@ -1,0 +1,88 @@
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Supply Product List</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+	<link href="style.css" rel="stylesheet">
+</head>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 ></h1>
+          {% if role %}
+                    <a href="../accounts" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-home"></i>    Home</a>
+                    {% else %}
+    <a href="../accounts/worker" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-home"></i>   Home</a>
+    {% endif %}
+</div>
+
+{% if error %}
+        <p style="color: red;">
+            {{error_statement}}
+        </p>
+  {% endif %}
+<form method="POST" >
+    {% csrf_token %}
+    <input type="text" style="margin-left:10px;"required="True" name="item" placeholder="Enter Item Name">
+    <input type="submit" value="Search" style="  background-color: #09082B;
+  border: none;
+  color: white;
+  padding: 2px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;">
+</form><br>
+<table class="table" border="1">
+<thead class="thead-dark" >
+    <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>MRP</th>
+    <th>Supplier Name</th>
+    <th>Phone no</th>
+    <th>Purchase Price</th>
+    <th>Discount</th>
+    <th>View</th>
+    <th>Update</th>
+    <th>Delete</th>
+    </tr>
+</thead>
+<tbody>
+    {% if not count %}
+     <tr>
+        <td>{{obj_list.item_id.name}}</td>
+        <td> {{obj_list.item_id.type}} </td>
+        <td>{{obj_list.item_id.MRP}}</td>
+        <td> {{obj_list.supplier_id.name}} </td>
+        <td> {{obj_list.supplier_id.phone_no}} </td>
+        <td> {{obj_list.purchase_price}} </td>
+        <td> {{obj_list.discount}} </td>
+        <td><a href="{% url 'Supply_product_view' obj_list.id %}">View</a></td>
+        <td><a href="{% url 'Supply_product_edit' obj_list.id %}">Update</a></td>
+        <td><a href="{% url 'Supply_product_delete' obj_list.id %}">Delete</a></td>
+     </tr>
+    {% endif %}
+    {% if count %}
+        {% for it in obj_list %}
+        <tr>
+        <td>{{it.item_id.name}}</td>
+        <td> {{it.item_id.type}} </td>
+        <td>{{it.item_id.MRP}}</td>
+        <td> {{it.supplier_id.name}} </td>
+        <td> {{it.supplier_id.phone_no}} </td>
+        <td> {{it.purchase_price}} </td>
+        <td> {{it.discount}} </td>
+        <td><a href="{% url 'Supply_product_view' it.id %}">View</a></td>
+        <td><a href="{% url 'Supply_product_edit' it.id %}">Update</a></td>
+        <td><a href="{% url 'Supply_product_delete' it.id %}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+
+</tbody>
+</table>
+<a href="{% url 'Supply_product_new' %}" style="margin-left:10px;">New</a>
+

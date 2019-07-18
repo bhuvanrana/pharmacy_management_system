@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+{% load static %}
+<link href="{% static 'accounts/css/sb-admin-2.min.css' %}" rel="stylesheet">
+<body>
+ <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4">
+                        <!-- Expiry Date -->
+                             <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Expiring Soon</h6>
+                             </div>
+                        <!-- Expiry Date -->
+
+                        <table class="table">
+                         <thead>
+                              <tr>
+                                  <th>Month</th>
+                                <th>Total </th>
+
+                              </tr>
+                            </thead>
+                         <tbody>
+                       {% for i in monthly_list %}
+                        <tr>
+                            <td>{{i.month}}</td>
+                            <td>{{i.total}}</td>
+                       </tr>
+                        {% endfor %}
+
+                         </tbody>
+                          </table>
+                        </div>
+                    </div>
+
+</body>
+</html>
